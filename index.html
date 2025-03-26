@@ -196,33 +196,58 @@
                 gameContainer.id = 'gameContainer';
                 document.body.appendChild(gameContainer);
                 
-                // 创建返回按钮
-                const backBtn = document.createElement('button');
-                backBtn.textContent = '返回主页';
-                backBtn.className = 'back-btn';
-                backBtn.onclick = () => {
-                    gameContainer.remove();
-                    document.querySelector('.container').style.display = 'block';
-                };
-                document.body.appendChild(backBtn);
+                // 添加历史记录状态
+                history.pushState({ game: true }, '', gamePage);
+                
+                // 监听浏览器后退事件
+                window.addEventListener('popstate', function(event) {
+                    if (!event.state || !event.state.game) {
+                        // 如果返回到了主页，清理游戏容器
+                        gameContainer.remove();
+                        document.querySelector('.container').style.display = 'block';
+                    }
+                });
                 
                 // 加载游戏页面
                 fetch(gamePage)
-                    .then(response => response.text())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.text();
+                    })
                     .then(html => {
                         gameContainer.innerHTML = html;
+                        
                         // 重新加载游戏脚本
                         const scripts = gameContainer.getElementsByTagName('script');
                         for(let script of scripts) {
                             const newScript = document.createElement('script');
-                            newScript.src = script.src;
-                            newScript.textContent = script.textContent;
+                            if (script.src) {
+                                newScript.src = script.src;
+                            } else {
+                                newScript.textContent = script.textContent;
+                            }
                             script.parentNode.replaceChild(newScript, script);
                         }
+                        
+                        // 触发游戏初始化事件
+                        const initEvent = new CustomEvent('gameInit');
+                        gameContainer.dispatchEvent(initEvent);
+                    })
+                    .catch(error => {
+                        console.error('游戏加载失败:', error);
+                        gameContainer.innerHTML = `
+                            <div style="text-align: center; padding: 2rem;">
+                                <h2>游戏加载失败</h2>
+                                <p>请稍后重试</p>
+                            </div>
+                        `;
+                    })
+                    .finally(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = '开始游戏';
                     });
-                
-                btn.disabled = false;
-                btn.innerHTML = '开始游戏';
             }, 500);
         }
 
