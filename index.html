@@ -94,6 +94,38 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
+        /* 游戏容器样式 */
+        #gameContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 1000;
+        }
+
+        /* 返回按钮样式 */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            z-index: 1001;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.05);
+        }
+
         footer {
             text-align: center;
             margin-top: 3rem;
@@ -104,7 +136,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>🐟 摸鱼小游戏合集aa</h1>
+            <h1>🐟 摸鱼小游戏合集</h1>
             <p>工作学习间隙的轻松时刻</p>
         </header>
 
@@ -156,7 +188,39 @@
             btn.innerHTML = '<div class="loader"></div> 加载中...';
             
             setTimeout(() => {
-                window.open(gamePage, '_blank');
+                // 隐藏主页面内容
+                document.querySelector('.container').style.display = 'none';
+                
+                // 创建游戏容器
+                const gameContainer = document.createElement('div');
+                gameContainer.id = 'gameContainer';
+                document.body.appendChild(gameContainer);
+                
+                // 创建返回按钮
+                const backBtn = document.createElement('button');
+                backBtn.textContent = '返回主页';
+                backBtn.className = 'back-btn';
+                backBtn.onclick = () => {
+                    gameContainer.remove();
+                    document.querySelector('.container').style.display = 'block';
+                };
+                document.body.appendChild(backBtn);
+                
+                // 加载游戏页面
+                fetch(gamePage)
+                    .then(response => response.text())
+                    .then(html => {
+                        gameContainer.innerHTML = html;
+                        // 重新加载游戏脚本
+                        const scripts = gameContainer.getElementsByTagName('script');
+                        for(let script of scripts) {
+                            const newScript = document.createElement('script');
+                            newScript.src = script.src;
+                            newScript.textContent = script.textContent;
+                            script.parentNode.replaceChild(newScript, script);
+                        }
+                    });
+                
                 btn.disabled = false;
                 btn.innerHTML = '开始游戏';
             }, 500);
