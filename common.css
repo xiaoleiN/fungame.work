@@ -29,3 +29,8 @@
         left: 200%;
     }
 }
+
+.game-card {
+    will-change: transform; /* 启用GPU加速 */
+    contain: content; /* 限制重绘范围 */
+}

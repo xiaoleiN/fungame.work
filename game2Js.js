@@ -94,8 +94,10 @@ function gameLoop() {
     balloon.style.transform = `translate(-50%, -50%) rotate(${velocity * 2}deg)`;
 
     // 碰撞检测
-    if (newTop >= window.innerHeight - 50 || newTop <= 0) {
-        gameOver();
+
+    const BUFFER = 2; // 2像素缓冲
+    if(newTop >= window.innerHeight - 50 - BUFFER || newTop <= BUFFER){
+            gameOver();
     }
 
     requestAnimationFrame(gameLoop);

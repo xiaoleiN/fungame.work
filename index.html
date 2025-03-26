@@ -175,7 +175,7 @@
         </div>
 
         <footer>
-            <p>© 2023 摸鱼工作室 - 今日已摸鱼 ${new Date().getHours()} 小时</p>
+            <p>© 2025 摸鱼工作室 - 今日已摸鱼 ${new Date().getHours()} 小时</p>
         </footer>
     </div>
 
@@ -253,14 +253,14 @@
 
         // 动态时间显示
         function updateFishTime() {
-            const hours = new Date().getHours();
-            document.getElementById('fishHours').textContent = 
-                hours > 12 ? hours - 12 : hours; // 转换为12小时制
-        }
+    const now = new Date();
+    document.querySelector('footer p').innerHTML = 
+        `© 2025 摸鱼工作室 - 今日已摸鱼 ${now.getHours()} 时 ${now.getMinutes()} 分`;
+}
         
         // 初始化
         updateFishTime();
-        setInterval(updateFishTime, 60000); // 每分钟更新
+        setInterval(updateFishTime, 1000); // 每分钟更新
 
         // 添加加载动画样式
         const style = document.createElement('style');

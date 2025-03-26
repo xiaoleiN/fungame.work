@@ -522,3 +522,6 @@ body::before {
         rgba(255, 87, 34, 0)
     );
 }
+#balloon {
+    backface-visibility: hidden; /* 消除闪烁 */
+}
