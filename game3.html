@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>办公室摸鱼大作战</title>
+    <style>
+        body {
+            background: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #gameBoard {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .file {
+            width: 60px;
+            height: 80px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .file:hover {
+            transform: scale(1.1);
+        }
+
+        #score {
+            font-size: 24px;
+            color: #333;
+            margin: 10px;
+        }
+
+        #timer {
+            font-size: 20px;
+            color: #666;
+        }
+
+        .hidden {
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="score">得分: 0</div>
+    <div id="timer">剩余时间: 30秒</div>
+    <div id="gameBoard"></div>
+    <button onclick="startGame()" style="margin: 20px; padding: 10px 20px;">开始摸鱼</button>
+
+    <script>
+        const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD'];
+        let score = 0;
+        let timeLeft = 30;
+        let timerId;
+        let gameActive = false;
+
+        function createGameBoard() {
+            const board = document.getElementById('gameBoard');
+            board.innerHTML = '';
+            
+            for(let i = 0; i < 25; i++) {
+                const file = document.createElement('div');
+                file.className = 'file';
+                file.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                file.textContent = '📁';
+                file.addEventListener('click', handleClick);
+                board.appendChild(file);
+            }
+        }
+
+        function handleClick(e) {
+            if(!gameActive) return;
+            
+            const clickedColor = e.target.style.backgroundColor;
+            const files = document.querySelectorAll('.file');
+            
+            files.forEach(file => {
+                if(file.style.backgroundColor === clickedColor) {
+                    file.classList.add('hidden');
+                    setTimeout(() => {
+                        file.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        file.classList.remove('hidden');
+                    }, 500);
+                }
+            });
+
+            score += 10;
+            document.getElementById('score').textContent = `得分: ${score}`;
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            document.getElementById('timer').textContent = `剩余时间: ${timeLeft}秒`;
+            
+            if(timeLeft <= 0) {
+                endGame();
+            }
+        }
+
+        function startGame() {
+            gameActive = true;
+            score = 0;
+            timeLeft = 30;
+            document.getElementById('score').textContent = '得分: 0';
+            createGameBoard();
+            timerId = setInterval(updateTimer, 1000);
+        }
+
+        function endGame() {
+            gameActive = false;
+            clearInterval(timerId);
+            alert(`摸鱼结束！你的得分是: ${score}`);
+        }
+    </script>
+</body>
+</html>

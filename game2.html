@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>气球游戏</title>
+    <link rel="stylesheet" href="game2style.css">
+</head>
+<body>
+    <div id="game">
+        <div id="balloon"></div>
+        <div id="hud">
+            <div id="timer">0</div>
+            <div id="bestTime">0</div>
+        </div>
+        <div id="gravityBar">
+            <div id="gravityFill"></div>
+            <div id="gravityText">重力: 0.15</div>
+        </div>
+        <button id="pauseButton">暂停 (空格)</button>
+        <div class="game-instructions">
+            <h3>游戏说明</h3>
+            <p>点击屏幕让气球上升</p>
+            <div class="collectible-info">⭐️ <span>闪耀加持，减轻重力</span></div>
+            <div class="collectible-info">☁️ <span>云朵托起，轻微减重</span></div>
+            <div class="collectible-info">🌈 <span>彩虹之力，大幅减重</span></div>
+            <div class="collectible-info">💣 <span>增加重力3秒</span></div>
+            <div class="collectible-info">🕙 <span>暂停下落3秒</span></div>
+            <p>连续收集可以获得连击加成！</p>
+            <p>按空格键暂停游戏</p>
+        </div>
+    </div>
+    <div id="pauseOverlay">
+        <span>游戏暂停</span>
+    </div>
+    <div id="topBoundary"></div>
+    <div id="bottomBoundary"></div>
+    <div class="cloud-decoration"></div>
+    <script src="game2Js.js"></script>
+</body>
+</html>

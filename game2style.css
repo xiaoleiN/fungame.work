@@ -1,0 +1,524 @@
+/* 基础样式 */
+body {
+    margin: 0;
+    overflow: hidden;
+    height: 100vh;
+    background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 50%, #80deea 100%);
+    animation: gradientBG 20s ease infinite;
+    cursor: pointer;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* 添加柔和的云朵效果 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+#game {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 气球样式 */
+#balloon {
+    width: 60px;
+    height: 80px;
+    position: absolute;
+    transition: transform 0.1s;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 48"><path fill="%23FF69B4" d="M18 3C10 3 3 10 3 18v24h30V18c0-8-7-15-15-15z"/><path fill="%23FFF" d="M18 13l-4 8h8l-4-8z"/><path fill="%23FFB6C1" d="M18 3C10 3 3 10 3 18v24h30V18c0-8-7-15-15-15z" opacity="0.3"/></svg>');
+    z-index: 2;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+}
+
+/* HUD界面 */
+#hud {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    color: #FFF;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#timer, #bestTime {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    min-width: 60px;
+    text-align: center;
+    color: #37474F;
+}
+
+#timer::before {
+    content: '时间: ';
+    font-size: 16px;
+}
+
+#bestTime::before {
+    content: '最佳: ';
+    font-size: 16px;
+}
+
+/* 游戏边界警示 */
+.boundary {
+    position: fixed;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(90deg, rgba(255,0,0,0.2), rgba(255,0,0,0.4), rgba(255,0,0,0.2));
+    transition: opacity 0.5s;
+    opacity: 0;
+    z-index: 1;
+}
+
+#topBoundary { 
+    top: 0; 
+    box-shadow: 0 5px 15px rgba(255,0,0,0.2); 
+}
+
+#bottomBoundary { 
+    bottom: 0; 
+    box-shadow: 0 -5px 15px rgba(255,0,0,0.2); 
+}
+
+/* 动画效果 */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-50px); }
+}
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.2); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes dangerGlow {
+    0% { filter: drop-shadow(0 0 5px #ff0000); }
+    50% { filter: drop-shadow(0 0 15px #ff0000); }
+    100% { filter: drop-shadow(0 0 5px #ff0000); }
+}
+
+@keyframes alertFade {
+    0% { opacity: 0; transform: translate(-50%, -20px); }
+    20% { opacity: 1; transform: translate(-50%, 0); }
+    80% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, 20px); }
+}
+
+/* 特效类 */
+.balloon-pulse {
+    animation: pulse 0.3s ease-out;
+}
+
+.danger-glow {
+    animation: dangerGlow 1s infinite;
+}
+
+.floating-text {
+    position: fixed;
+    color: #FFF;
+    font: bold 20px Arial;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    animation: floatUp 1.5s ease-out forwards;
+}
+
+.difficulty-alert {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 25px;
+    font-size: 24px;
+    text-align: center;
+    opacity: 0;
+    animation: alertFade 3s ease-out;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 999;
+}
+
+/* 星星样式 */
+.star {
+    position: absolute;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.star.small {
+    width: 20px;
+    height: 20px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23FFD700" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/><path fill="%23FFF" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" opacity="0.3"/></svg>');
+}
+
+.star.medium {
+    width: 30px;
+    height: 30px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23FFD700" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/><path fill="%23FFF" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" opacity="0.3"/></svg>');
+}
+
+.star.large {
+    width: 40px;
+    height: 40px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23FFD700" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/><path fill="%23FFF" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" opacity="0.3"/></svg>');
+}
+
+.star:hover {
+    transform: scale(1.2) rotate(15deg);
+    filter: brightness(1.2) drop-shadow(0 4px 8px rgba(255,215,0,0.4));
+}
+
+/* 分数效果 */
+.score-effect {
+    position: fixed;
+    font-size: 24px;
+    color: #FF69B4;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    pointer-events: none;
+    z-index: 1000;
+    white-space: nowrap;
+    text-align: center;
+    animation: floatUp 0.8s ease-out forwards;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+}
+
+/* 屏幕发光效果 */
+.glow-effect {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(255,215,0,0.2) 0%, transparent 70%);
+    pointer-events: none;
+    animation: fadeOut 1.5s ease-out forwards;
+    z-index: 5;
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* 里程碑提示 */
+.milestone {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    color: white;
+    padding: 20px 40px;
+    border-radius: 30px;
+    font-size: 28px;
+    text-align: center;
+    opacity: 0;
+    animation: alertFade 2s ease-out;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 999;
+}
+
+/* 连击效果 */
+.combo-effect {
+    position: fixed;
+    font-size: 32px;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    pointer-events: none;
+    z-index: 1000;
+    white-space: nowrap;
+    text-align: center;
+    animation: comboFloat 1s ease-out forwards;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes comboFloat {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5) rotate(-10deg);
+        opacity: 0;
+    }
+    20% {
+        transform: translate(-50%, -50%) scale(1.2) rotate(5deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        opacity: 0;
+    }
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0;
+    }
+    20% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(0.8) translateY(-50px);
+        opacity: 0;
+    }
+}
+
+/* 添加云朵背景 */
+.cloud {
+    position: absolute;
+    background: rgba(255,255,255,0.8);
+    border-radius: 50px;
+    filter: blur(5px);
+    opacity: 0.6;
+    z-index: 0;
+}
+
+.cloud:nth-child(1) {
+    width: 100px;
+    height: 40px;
+    top: 20%;
+    left: 10%;
+    animation: floatCloud 20s linear infinite;
+}
+
+.cloud:nth-child(2) {
+    width: 150px;
+    height: 60px;
+    top: 40%;
+    right: 15%;
+    animation: floatCloud 25s linear infinite reverse;
+}
+
+.cloud:nth-child(3) {
+    width: 80px;
+    height: 30px;
+    bottom: 30%;
+    left: 30%;
+    animation: floatCloud 18s linear infinite;
+}
+
+@keyframes floatCloud {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(calc(100vw + 100%)); }
+}
+
+/* 收集物基础样式 */
+.collectible {
+    position: absolute;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 3;
+    font-size: 40px;
+    text-align: center;
+    line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+    -webkit-user-select: none;  /* Safari */
+    -moz-user-select: none;     /* Firefox */
+    -ms-user-select: none;      /* IE/Edge */
+    user-select: none;          /* 标准 */
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-tap-highlight-color: transparent; /* 移除点击高亮 */
+}
+
+/* 收集物悬停效果 */
+.collectible:hover {
+    transform: scale(1.2) rotate(15deg);
+    filter: brightness(1.2) drop-shadow(0 4px 8px rgba(255,255,255,0.4));
+    -webkit-tap-highlight-color: transparent; /* 移除点击高亮 */
+}
+
+/* 收集物动画效果 */
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0); }
+}
+
+.collectible {
+    animation: float 2s ease-in-out infinite;
+    -webkit-tap-highlight-color: transparent; /* 移除点击高亮 */
+}
+
+/* 收集物特效 */
+.collectible-effect {
+    position: fixed;
+    font-size: 32px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    pointer-events: none;
+    z-index: 1000;
+    white-space: nowrap;
+    text-align: center;
+    animation: floatUp 0.8s ease-out forwards;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+}
+
+.star-effect { color: #FFD700; }
+.cloud-effect { color: #FFFFFF; }
+.rainbow-effect { color: #FFD700; }
+
+/* 收集物消失动画 */
+@keyframes collectibleDisappear {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+.collectible.disappearing {
+    animation: collectibleDisappear 0.5s ease-out forwards;
+    pointer-events: none;
+}
+
+/* 收集物点击特效 */
+@keyframes collectibleClickEffect {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+}
+
+.collectible.clicked {
+    animation: collectibleClickEffect 0.3s ease-out forwards;
+}
+
+#gravityBar {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 200px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+#gravityFill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4ecdc4, #ff6b6b);
+    transition: width 0.3s ease;
+}
+
+#gravityText {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 14px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    z-index: 1;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+/* 暂停进度条 */
+.pause-progress {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.pause-progress-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background: #fff;
+    transform-origin: left;
+    animation: progressShrink 3s linear forwards;
+}
+
+@keyframes progressShrink {
+    from {
+        transform: scaleX(1);
+    }
+    to {
+        transform: scaleX(0);
+    }
+}
+
+/* 收集物效果文字颜色 */
+.bomb-effect { 
+    color: #ff4444; 
+}
+.clock-effect { 
+    color: #4444ff; 
+}
+
+#topBoundary, #bottomBoundary {
+    background: linear-gradient(to bottom, 
+        rgba(255, 87, 34, 0.2), 
+        rgba(255, 87, 34, 0)
+    );
+}

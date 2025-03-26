@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>办公室记忆大作战</title>
+    <!-- 在现有的<style>标签内添加CSS动画 -->
+<style>
+    /* 其他已有样式... */
+
+    /* 在这里添加新动画 */
+    @keyframes matchSuccess {
+        0% { transform: scale(1); }
+    25% { transform: scale(1.05); } /* 减小缩放幅度 */
+    50% { transform: scale(0.98); }
+    75% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+    }
+
+    @keyframes glow {
+    0% { box-shadow: 0 0 10px rgba(76,175,80,0.3); } /* 降低发光强度 */
+    100% { box-shadow: 0 0 15px rgba(76,175,80,0.5); }
+}
+
+
+.card.matched {
+    animation: matchSuccess 0.5s ease-out;
+    opacity: 1 !important; /* 强制保持可见 */
+    visibility: visible !important;
+}
+
+    .card.matched .card-front {
+        background: rgba(76, 175, 80, 0.7); /* 添加透明度 */
+        color: rgba(255,255,255,0.9);
+        animation: 
+        glow 1s ease-in-out infinite alternate,
+        matchSuccess 0.4s ease-out; /* 缩短动画时间 */
+        }
+
+    .particle {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #FFD700;
+        border-radius: 50%;
+        pointer-events: none;
+        animation: particleFly 1s ease-out forwards;
+    }
+
+    @keyframes particleFly {
+        0% {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+        100% {
+            opacity: 0;
+            transform: translate(var(--tx), var(--ty));
+        }
+    }
+    /* 添加过渡效果 */
+    .card {
+        transition: all 0.2s ease-out;
+    }
+</style>
+
+<script>
+function checkMatch() {
+    const isMatch = gameState.firstCard.dataset.value === gameState.secondCard.dataset.value;
+    
+    if (isMatch) {
+        // 添加异步动画处理
+        requestAnimationFrame(() => {
+            gameState.firstCard.classList.add('matched');
+            gameState.secondCard.classList.add('matched');
+            checkGameWin();
+        });
+        
+        gameState.score += 100 * gameState.difficulty;
+        document.getElementById('score').textContent = gameState.score;
+        resetBoard();
+    } else {
+        gameState.lockBoard = true;
+        setTimeout(() => {
+            gameState.firstCard.classList.remove('flipped');
+            gameState.secondCard.classList.remove('flipped');
+            resetBoard();
+        }, 800);
+    }
+}
+    // 在现有函数之后添加新函数
+    // 新增开始：粒子效果函数
+    function createParticles(card) {
+        const rect = card.getBoundingClientRect();
+        const centerX = rect.left + rect.width/2;
+        const centerY = rect.top + rect.height/2;
+
+        for(let i = 0; i < 8; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const angle = (Math.PI * 2) * (i / 8);
+            const tx = Math.cos(angle) * 50;
+            const ty = Math.sin(angle) * 50;
+            
+            particle.style.setProperty('--tx', `${tx}px`);
+            particle.style.setProperty('--ty', `${ty}px`);
+            particle.style.left = `${centerX}px`;
+            particle.style.top = `${centerY}px`;
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 1000);
+        }
+    }
+    // 新增结束
+
+    // 其他已有函数...
+</script>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --danger-color: #ff5252;
+            --bg-gradient: linear-gradient(135deg, #b3cdd1 0%, #9fa4c4 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .game-title {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin: 0 0 20px 0;
+            text-align: center;
+        }
+
+        .game-board {
+            display: grid;
+            gap: 15px;
+            perspective: 1000px;
+            margin: 20px 0;
+        }
+
+        .card {
+            width: 100px;
+            height: 130px;
+            position: relative;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            font-size: 2em;
+        }
+
+        .card-front { background: #fff; transform: rotateY(180deg); }
+        .card-back { background: linear-gradient(45deg, #ff9a9e, #fad0c4); }
+
+        .stats-panel {
+            display: flex;
+            gap: 25px;
+            background: rgba(255,255,255,0.9);
+            padding: 15px 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .game-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            .game-board {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1 class="game-title">办公室记忆大作战</h1>
+        
+        <div class="stats-panel">
+            <div>⏳ 时间: <span id="timer">60</span>s</div>
+            <div>📝 尝试: <span id="attempts">0</span></div>
+            <div>🏆 得分: <span id="score">0</span></div>
+        </div>
+
+        <div class="control-panel">
+            <button class="game-btn" onclick="startGame()">🔄 新游戏</button>
+            <button class="game-btn" onclick="toggleDifficulty()">⚙️ 难度: <span id="difficulty">普通</span></button>
+        </div>
+
+        <div class="game-board" id="gameBoard"></div>
+    </div>
+
+    <script>
+        // ========== 游戏核心逻辑 ==========
+        const OFFICE_ITEMS = ['🍉','🫐','🍊','🍍','🍇','🍌','🍑','🥝','🍓','🍒','🥑','🍏'];
+        const DIFFICULTY_SETTINGS = {
+            1: { text: '简单', time: 90, pairs: 6, columns: 3 },
+            2: { text: '普通', time: 60, pairs: 8, columns: 4 },
+            3: { text: '困难', time: 45, pairs: 10, columns: 5 }
+        };
+
+        let gameState = {
+            difficulty: 2,
+            attempts: 0,
+            score: 0,
+            timeLeft: 60,
+            firstCard: null,
+            secondCard: null,
+            lockBoard: false,
+            timerId: null
+        };
+
+        // ========== 游戏功能函数 ==========
+        function createGameBoard() {
+            const gameBoard = document.getElementById('gameBoard');
+            gameBoard.innerHTML = '';
+            
+            const config = DIFFICULTY_SETTINGS[gameState.difficulty];
+            gameBoard.style.gridTemplateColumns = `repeat(${config.columns}, 1fr)`;
+
+            const items = OFFICE_ITEMS
+                .slice(0, config.pairs)
+                .flatMap(item => [item, item])
+                .sort(() => Math.random() - 0.5);
+
+            items.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.value = item;
+                card.innerHTML = `
+                    <div class="card-face card-front">${item}</div>
+                    <div class="card-face card-back"></div>
+                `;
+                card.addEventListener('click', () => handleCardClick(card));
+                gameBoard.appendChild(card);
+            });
+        }
+
+        function handleCardClick(card) {
+            if (gameState.lockBoard || 
+        card === gameState.firstCard || 
+        card.classList.contains('matched')) return;
+
+    // 添加点击即时反馈
+    card.style.transform = 'scale(0.95)';
+    setTimeout(() => card.style.transform = '', 100);
+
+            card.classList.add('flipped');
+
+            if (!gameState.firstCard) {
+                gameState.firstCard = card;
+                return;
+            }
+
+            gameState.secondCard = card;
+            gameState.attempts++;
+            document.getElementById('attempts').textContent = gameState.attempts;
+            checkMatch();
+        }
+
+        function checkMatch() {
+            const isMatch = gameState.firstCard.dataset.value === gameState.secondCard.dataset.value;
+            
+            if (isMatch) {
+                gameState.score += 100 * gameState.difficulty;
+                document.getElementById('score').textContent = gameState.score;
+                gameState.firstCard.classList.add('matched');
+                gameState.secondCard.classList.add('matched');
+                resetBoard();
+                checkGameWin();
+            } else {
+                gameState.lockBoard = true;
+                setTimeout(() => {
+                    gameState.firstCard.classList.remove('flipped');
+                    gameState.secondCard.classList.remove('flipped');
+                    resetBoard();
+                }, 1000);
+            }
+        }
+
+        function resetBoard() {
+            [gameState.firstCard, gameState.secondCard] = [null, null];
+    gameState.lockBoard = false; // 立即解除全局锁定
+        }
+
+        function startGame() {
+            clearInterval(gameState.timerId);
+            const config = DIFFICULTY_SETTINGS[gameState.difficulty];
+            
+            gameState = {
+                ...gameState,
+                attempts: 0,
+                score: 0,
+                timeLeft: config.time,
+                firstCard: null,
+                secondCard: null,
+                lockBoard: false
+            };
+
+            document.getElementById('attempts').textContent = 0;
+            document.getElementById('score').textContent = 0;
+            document.getElementById('timer').textContent = config.time;
+            
+            createGameBoard();
+            startTimer();
+        }
+
+        function toggleDifficulty() {
+            gameState.difficulty = gameState.difficulty % 3 + 1;
+            const { text } = DIFFICULTY_SETTINGS[gameState.difficulty];
+            document.getElementById('difficulty').textContent = text;
+            startGame();
+        }
+
+        function startTimer() {
+            gameState.timerId = setInterval(() => {
+                gameState.timeLeft--;
+                document.getElementById('timer').textContent = gameState.timeLeft;
+                
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timerId);
+                    alert('⌛ 时间到！游戏结束');
+                }
+            }, 1000);
+        }
+
+        function checkGameWin() {
+            const check = () => {
+        if (document.querySelectorAll('.card:not(.matched)').length === 0) {
+            clearInterval(gameState.timerId);
+            const finalScore = gameState.score + gameState.timeLeft * 10;
+            
+            // 延长延迟到2000ms（2秒）
+            setTimeout(() => {
+                alert(`🎉 挑战成功！得分: ${finalScore}`);
+                // 可在此处添加其他胜利后的操作
+            }, 1000); // 从500ms改为2000ms
+        }
+    }
+    requestAnimationFrame(check);
+}
+        // 初始化游戏
+        startGame();
+    </script>
+</body>
+</html>
