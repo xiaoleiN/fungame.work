@@ -111,7 +111,12 @@ document.addEventListener('click', (e) => {
         balloon.style.transform = 'translate(-50%, -50%) rotate(-15deg)';
     }
 });
-
+document.getElementById('gameContainer').addEventListener('gameDestroy', () => {
+    // 清理游戏特定资源
+    clearInterval(timerId);
+    cancelAnimationFrame(animationFrame);
+    document.removeEventListener('keydown', keyHandler);
+});
 function handleStarClick(e) {
     const currentTime = Date.now();
     const collectible = e.target;

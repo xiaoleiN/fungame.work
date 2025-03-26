@@ -182,6 +182,9 @@
     <script>
         // 修改后的游戏启动函数
         function startGame(gamePage) {
+            document.querySelectorAll('#gameContainer').forEach(container => {
+    container.remove();
+});
             // 添加加载动画
             const btn = event.target;
             btn.disabled = true;
@@ -200,13 +203,21 @@
                 history.pushState({ game: true }, '', gamePage);
                 
                 // 监听浏览器后退事件
-                window.addEventListener('popstate', function(event) {
-                    if (!event.state || !event.state.game) {
-                        // 如果返回到了主页，清理游戏容器
-                        gameContainer.remove();
-                        document.querySelector('.container').style.display = 'block';
-                    }
-                });
+            // 修改后的 popstate 事件监听
+window.addEventListener('popstate', function(event) {
+    const containers = document.querySelectorAll('#gameContainer');
+    containers.forEach(container => {
+        // 触发游戏销毁事件
+        const destroyEvent = new CustomEvent('gameDestroy');
+        container.dispatchEvent(destroyEvent);
+        container.remove();
+    });
+    document.querySelector('.container').style.display = 'block';
+    
+    // 强制重绘防止渲染残留
+    document.body.offsetHeight;
+});
+
                 
                 // 加载游戏页面
                 fetch(gamePage)

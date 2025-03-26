@@ -300,7 +300,12 @@ function checkMatch() {
             document.getElementById('attempts').textContent = gameState.attempts;
             checkMatch();
         }
-
+        document.getElementById('gameContainer').addEventListener('gameDestroy', () => {
+    // 清理游戏特定资源
+    clearInterval(timerId);
+    cancelAnimationFrame(animationFrame);
+    document.removeEventListener('keydown', keyHandler);
+});
         function checkMatch() {
             const isMatch = gameState.firstCard.dataset.value === gameState.secondCard.dataset.value;
             

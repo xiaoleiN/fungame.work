@@ -34,3 +34,18 @@
     will-change: transform; /* 启用GPU加速 */
     contain: content; /* 限制重绘范围 */
 }
+.container {
+    display: block !important; /* 强制覆盖内联样式 */
+    opacity: 1 !important;
+    transition: opacity 0.3s;
+}
+
+#gameContainer {
+    display: block;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+#gameContainer.leaving {
+    opacity: 0;
+}
