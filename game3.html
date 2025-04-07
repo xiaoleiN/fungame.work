@@ -1,130 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>办公室摸鱼大作战</title>
-    <style>
-        body {
-            background: #f0f0f0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        #gameBoard {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            margin: 20px;
-            padding: 20px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        .file {
-            width: 60px;
-            height: 80px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-        }
-
-        .file:hover {
-            transform: scale(1.1);
-        }
-
-        #score {
-            font-size: 24px;
-            color: #333;
-            margin: 10px;
-        }
-
-        #timer {
-            font-size: 20px;
-            color: #666;
-        }
-
-        .hidden {
-            visibility: hidden;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Click Rush Game</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f0f8ff;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    #game-area {
+      position: relative;
+      width: 100vw;
+      height: 80vh;
+      overflow: hidden;
+      background: #e0f7fa;
+      border: 2px solid #00bcd4;
+    }
+    .circle {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #ff4081;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff4081;
+      transition: background-color 0.2s;
+    }
+    #score {
+      font-size: 24px;
+      margin: 20px;
+    }
+    #start-btn {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #00bcd4;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+    #start-btn:hover {
+      background-color: #0097a7;
+    }
+  </style>
 </head>
 <body>
-    <div id="score">得分: 0</div>
-    <div id="timer">剩余时间: 30秒</div>
-    <div id="gameBoard"></div>
-    <button onclick="startGame()" style="margin: 20px; padding: 10px 20px;">开始摸鱼</button>
 
-    <script>
-        const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD'];
-        let score = 0;
-        let timeLeft = 30;
-        let timerId;
-        let gameActive = false;
+<h1>🎯 Click Rush Game</h1>
+<div id="score">Score: 0</div>
+<button id="start-btn">Start Game</button>
+<div id="game-area"></div>
 
-        function createGameBoard() {
-            const board = document.getElementById('gameBoard');
-            board.innerHTML = '';
-            
-            for(let i = 0; i < 25; i++) {
-                const file = document.createElement('div');
-                file.className = 'file';
-                file.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                file.textContent = '📁';
-                file.addEventListener('click', handleClick);
-                board.appendChild(file);
-            }
-        }
+<script>
+  const gameArea = document.getElementById('game-area');
+  const scoreDisplay = document.getElementById('score');
+  const startBtn = document.getElementById('start-btn');
+  let score = 0;
+  let gameInterval;
+  let timeout;
 
-        function handleClick(e) {
-            if(!gameActive) return;
-            
-            const clickedColor = e.target.style.backgroundColor;
-            const files = document.querySelectorAll('.file');
-            
-            files.forEach(file => {
-                if(file.style.backgroundColor === clickedColor) {
-                    file.classList.add('hidden');
-                    setTimeout(() => {
-                        file.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                        file.classList.remove('hidden');
-                    }, 500);
-                }
-            });
+  function startGame() {
+    score = 0;
+    scoreDisplay.textContent = 'Score: 0';
+    startBtn.disabled = true;
+    gameArea.innerHTML = '';
+    spawnCircle();
+  }
 
-            score += 10;
-            document.getElementById('score').textContent = `得分: ${score}`;
-        }
+  function spawnCircle() {
+    const circle = document.createElement('div');
+    circle.classList.add('circle');
 
-        function updateTimer() {
-            timeLeft--;
-            document.getElementById('timer').textContent = `剩余时间: ${timeLeft}秒`;
-            
-            if(timeLeft <= 0) {
-                endGame();
-            }
-        }
+    const x = Math.random() * (window.innerWidth - 60);
+    const y = Math.random() * (gameArea.offsetHeight - 60);
 
-        function startGame() {
-            gameActive = true;
-            score = 0;
-            timeLeft = 30;
-            document.getElementById('score').textContent = '得分: 0';
-            createGameBoard();
-            timerId = setInterval(updateTimer, 1000);
-        }
+    circle.style.left = `${x}px`;
+    circle.style.top = `${y}px`;
 
-        function endGame() {
-            gameActive = false;
-            clearInterval(timerId);
-            alert(`摸鱼结束！你的得分是: ${score}`);
-        }
-    </script>
+    circle.addEventListener('click', () => {
+      score++;
+      scoreDisplay.textContent = `Score: ${score}`;
+      clearTimeout(timeout);
+      circle.remove();
+      spawnCircle();
+    });
+
+    gameArea.appendChild(circle);
+
+    timeout = setTimeout(() => {
+      alert('Game over! Your score is：' + score);
+      resetGame();
+    }, 1500);
+  }
+
+  function resetGame() {
+    startBtn.disabled = false;
+    gameArea.innerHTML = '';
+  }
+
+  startBtn.addEventListener('click', startGame);
+</script>
+
 </body>
 </html>

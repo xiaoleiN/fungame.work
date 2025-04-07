@@ -12,7 +12,7 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>摸鱼小游戏合集fx</title>
+    <title>Fish game collection</title>
     <style>
         :root {
             --primary-color: #4CAF50;
@@ -145,29 +145,29 @@
 <body>
     <div class="container">
         <header>
-            <h1>🐟 摸鱼小游戏合集</h1>
-            <p>工作学习间隙的轻松时刻</p>
+            <h1>🐟 Fish game collection</h1>
+            <p>A relaxing moment between work and study</p>
         </header>
 
         <div class="games-container">
        <!-- 游戏1 - 记忆大挑战 -->
 <div class="game-card">
     <div class="game-icon">🧠</div>
-    <h2>记忆大挑战</h2>
+    <h2>Grand memory Challenge</h2>
     <p class="game-description">
-        🕵️ 找出隐藏的相同物品配对<br>
-    ⏱️ 限时挑战你的记忆力<br>
-    🧩 三个难度随心切换
+    🕵️ Find hidden pairs of identical items<br>
+    ⏱️ Challenge your memory for a limited time<br>
+    🧩 Switch between the three difficulty levels
     </p>
-    <button class="play-btn" onclick="startGame('game1.html')">开始摸鱼</button>
+    <button class="play-btn" onclick="startGame('game1.html')">Touch the fish</button>
 </div>
 
             <!-- 游戏2 -->
             <div class="game-card">
                 <div class="game-icon">🕹️</div>
-                <h2>文件大战</h2>
+                <h2>Balloon drop</h2>
                 <p class="game-description">
-                    在堆积如山的文件中杀出重围，用回形针击败烦人的工作任务！
+                    Don't let your balloon fall！
                 </p>
                 <button class="play-btn" onclick="startGame('game2.html')">开始摸鱼</button>
             </div>
@@ -175,16 +175,16 @@
             <!-- 游戏3 -->
             <div class="game-card">
                 <div class="game-icon">🎯</div>
-                <h2>会议生存指南</h2>
+                <h2>Find the red dot</h2>
                 <p class="game-description">
-                    在漫长的会议中保持清醒，躲避领导的突然提问，坚持到会议结束！
+                    Keep tapping the red dot on the screen
                 </p>
                 <button class="play-btn" onclick="startGame('game3.html')">开始摸鱼</button>
             </div>
         </div>
 
         <footer>
-            <p>© 2025 摸鱼工作室 - 今日已摸鱼 ${new Date().getHours()} 小时</p>
+            <p>© 2025 Fish studio xl</p>
         </footer>
     </div>
 
@@ -197,7 +197,7 @@
             // 添加加载动画
             const btn = event.target;
             btn.disabled = true;
-            btn.innerHTML = '<div class="loader"></div> 加载中...';
+            btn.innerHTML = '<div class="loader"></div> Loading...';
             
             setTimeout(() => {
                 // 隐藏主页面内容
@@ -266,7 +266,7 @@ window.addEventListener('popstate', function(event) {
                     })
                     .finally(() => {
                         btn.disabled = false;
-                        btn.innerHTML = '开始游戏';
+                        btn.innerHTML = 'Start';
                     });
             }, 500);
         }

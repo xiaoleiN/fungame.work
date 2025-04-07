@@ -46,7 +46,7 @@ const COLLECTIBLE_TYPES = [
 function updateGravityDisplay() {
     const gravityPercentage = ((gravity - INITIAL_GRAVITY) / (MAX_GRAVITY - INITIAL_GRAVITY)) * 100;
     gravityBar.style.width = `${Math.min(100, Math.max(0, gravityPercentage))}%`;
-    gravityText.textContent = `重力: ${gravity.toFixed(2)}`;
+    gravityText.textContent = `gravity: ${gravity.toFixed(2)}`;
 }
 
 function gameLoop() {
@@ -185,7 +185,7 @@ function handleStarClick(e) {
 function createComboEffect(x, y, combo, multiplier) {
     const effect = document.createElement('div');
     effect.className = 'combo-effect';
-    effect.innerHTML = `${combo}连击!<br>${multiplier.toFixed(1)}倍`;
+    effect.innerHTML = `${combo}Combo!<br>${multiplier.toFixed(1)}倍`;
     effect.style.left = `${x}px`;
     effect.style.top = `${y}px`;
     document.body.appendChild(effect);
@@ -271,7 +271,7 @@ function gameOver() {
     const timeDiff = bestTime - finalTime;
     const message = timeDiff > 0
         ? `差${timeDiff}秒打破纪录！`
-        : "🎉 恭喜创造新纪录！";
+        : "🎉 Congratulations on the new record!";
 
     alert(`${message}\n本次存活：${finalTime}秒\n历史最佳：${bestTime}秒`);
     location.reload();
